@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Chatbot</title>
+
+<style>
+body{
+  margin:0;height:100vh;
+  display:flex;justify-content:center;
+  font-family:Segoe UI,system-ui;
+  background:linear-gradient(135deg,#f72585,#7209b7);
+}
+.app{
+  width:100%;max-width:420px;
+  background:#fff;display:flex;flex-direction:column;
+  position:relative;
+}
+
+/* HEADER */
+.header{
+  display:flex;align-items:center;
+  padding:10px;color:white;
+  background:linear-gradient(135deg,#f72585,#7209b7);
+}
+.profile{
+  width:36px;height:36px;border-radius:50%;
+  background:white;color:#7209b7;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:bold;cursor:pointer;
+}
+.title{flex:1;text-align:center;font-weight:600}
+.header button{
+  background:none;border:none;
+  color:white;font-size:18px;cursor:pointer;
+}
+
+/* CHAT */
+.chat{flex:1;overflow:auto;padding:12px}
+.welcome{text-align:center;color:#888;margin-top:40px}
+.msg{max-width:85%;margin:6px 0}
+.user{
+  background:#7209b7;color:white;
+  padding:10px;border-radius:14px;
+  margin-left:auto;
+}
+.bot{
+  background:#f1f1f1;
+  padding:10px;border-radius:14px;
+}
+
+/* CODE BLOCK */
+.code-box{
+  background:#1e1e1e;
+  color:#dcdcdc;
+  border-radius:10px;
+  padding:10px;
+  font-family:Consolas,monospace;
+  font-size:13px;
+  position:relative;
+  margin-top:6px;
+}
+.copy-btn{
+  position:absolute;
+  top:6px;right:6px;
+  background:#444;color:white;
+  border:none;border-radius:6px;
+  padding:4px 8px;
+  font-size:11px;
+  cursor:pointer;
+}
+
+/* INPUT */
+.input{
+  display:flex;padding:8px;
+  border-top:1px solid #ddd;
+}
+input{
+  flex:1;padding:10px;
+  border-radius:20px;border:1px solid #ccc;
+}
+.send{
+  margin-left:6px;padding:10px 16px;
+  border-radius:50%;border:none;
+  background:#f72585;color:white;
+  cursor:pointer;
+}
+
+/* PANELS */
+.panel{
+  position:absolute;inset:0;
+  background:white;display:none;
+  flex-direction:column;
+}
+.panel.show{display:flex}
+.panel-header{
+  display:flex;justify-content:space-between;
+  padding:10px;border-bottom:1px solid #ddd;
+}
+
+/* HISTORY */
+.hist-item{
+  padding:10px;border-bottom:1px solid #eee;
+  display:flex;align-items:center;
+  justify-content:space-between;
+  cursor:pointer;
+  position:relative;
+}
+.hist-item:hover{background:#f8f8f8}
+.menu-btn{font-size:18px;cursor:pointer}
+
+/* DROPDOWN */
+.dropdown{
+  position:absolute;
+  right:10px;top:36px;
+  background:white;
+  border:1px solid #ddd;
+  border-radius:8px;
+  display:none;
+  z-index:10;
+}
+.dropdown button{
+  width:100%;
+  padding:8px 12px;
+  border:none;background:none;
+  text-align:left;cursor:pointer;
+}
+.dropdown button:hover{background:#f1f1f1}
+
+/* COLORS */
+.color{
+  width:30px;height:30px;
+  border-radius:50%;
+  margin:4px;
+  display:inline-block;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<!-- HEADER -->
+<div class="header">
+  <div class="profile" onclick="openProfile()">AI</div>
+  <div class="title">AI Chatbot</div>
+  <button onclick="newChat()">➕</button>
+  <button onclick="openHistory()">📜</button>
+</div>
+
+<!-- CHAT -->
+<div id="chat" class="chat">
+  <div id="welcome" class="welcome">
+    <h3>How can I help you today? 🤍</h3>
+  </div>
+</div>
+
+<!-- INPUT -->
+<div class="input">
+  <input id="input" autofocus
+    onkeydown="if(event.key==='Enter')send()">
+  <button class="send" onclick="send()">➤</button>
+</div>
+
+<!-- HISTORY -->
+<div id="historyPanel" class="panel">
+  <div class="panel-header">
+    <b>History</b>
+    <button onclick="closeHistory()">✖</button>
+  </div>
+  <div id="historyList"></div>
+</div>
+
+<!-- PROFILE -->
+<div id="profilePanel" class="panel">
+  <div class="panel-header">
+    <b>Background</b>
+    <button onclick="closeProfile()">✖</button>
+  </div>
+  <div style="padding:10px">
+    <!-- 10 BACKGROUNDS -->
+    <span class="color" style="background:#ffadad" onclick="setBg('#ffadad')"></span>
+    <span class="color" style="background:#ffd6a5" onclick="setBg('#ffd6a5')"></span>
+    <span class="color" style="background:#caffbf" onclick="setBg('#caffbf')"></span>
+    <span class="color" style="background:#9bf6ff" onclick="setBg('#9bf6ff')"></span>
+    <span class="color" style="background:#bdb2ff" onclick="setBg('#bdb2ff')"></span>
+    <span class="color" style="background:linear-gradient(45deg,#f72585,#7209b7)"
+      onclick="setBg('linear-gradient(45deg,#f72585,#7209b7)')"></span>
+    <span class="color" style="background:linear-gradient(45deg,#4cc9f0,#4361ee)"
+      onclick="setBg('linear-gradient(45deg,#4cc9f0,#4361ee)')"></span>
+    <span class="color" style="background:linear-gradient(45deg,#ff9a9e,#fad0c4)"
+      onclick="setBg('linear-gradient(45deg,#ff9a9e,#fad0c4)')"></span>
+    <span class="color" style="background:linear-gradient(45deg,#a1c4fd,#c2e9fb)"
+      onclick="setBg('linear-gradient(45deg,#a1c4fd,#c2e9fb)')"></span>
+    <span class="color" style="background:linear-gradient(45deg,#d4fc79,#96e6a1)"
+      onclick="setBg('linear-gradient(45deg,#d4fc79,#96e6a1)')"></span>
+  </div>
+</div>
+
+</div>
+
+<script>
+let chats = JSON.parse(localStorage.getItem("chats")||"[]");
+let currentChat = null;
+
+const chatDiv = document.getElementById("chat");
+const welcome = document.getElementById("welcome");
+
+/* INIT – always new chat */
+newChat();
+
+/* CHAT RENDER */
+function render(){
+  chatDiv.innerHTML="";
+  if(currentChat.messages.length===0){
+    chatDiv.appendChild(welcome);
+    return;
+  }
+  currentChat.messages.forEach(m=>{
+    if(m.role==="assistant"){
+      renderBot(m.content);
+    }else{
+      const d=document.createElement("div");
+      d.className="msg user";
+      d.textContent=m.content;
+      chatDiv.appendChild(d);
+    }
+  });
+  chatDiv.scrollTop=chatDiv.scrollHeight;
+}
+
+/* BOT MESSAGE WITH CODE SEPARATION */
+function renderBot(text){
+  const parts = text.split(/```/);
+  parts.forEach((p,i)=>{
+    if(i%2===0 && p.trim()){
+      const d=document.createElement("div");
+      d.className="msg bot";
+      d.textContent=p;
+      chatDiv.appendChild(d);
+    }else if(i%2){
+      const box=document.createElement("div");
+      box.className="code-box";
+      box.textContent=p.replace(/^[a-z]+/i,"").trim();
+      const b=document.createElement("button");
+      b.className="copy-btn";
+      b.textContent="Copy";
+      b.onclick=()=>navigator.clipboard.writeText(box.textContent);
+      box.appendChild(b);
+      chatDiv.appendChild(box);
+    }
+  });
+}
+
+/* SEND */
+async function send(){
+  const t=input.value.trim();
+  if(!t)return;
+  input.value="";
+  currentChat.messages.push({role:"user",content:t});
+  render();
+
+  const r=await fetch("http://localhost:3000/chat",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({messages:currentChat.messages})
+  });
+  const d=await r.json();
+  currentChat.messages.push({role:"assistant",content:d.reply});
+  if(currentChat.title==="New chat") currentChat.title=t.slice(0,30);
+  save();
+  render();
+}
+
+/* NEW CHAT */
+function newChat(){
+  currentChat={id:Date.now(),title:"New chat",messages:[]};
+  chats.unshift(currentChat);
+  save();
+  render();
+}
+
+/* HISTORY */
+function openHistory(){
+  historyList.innerHTML="";
+  chats.forEach((c,i)=>{
+    const item=document.createElement("div");
+    item.className="hist-item";
+    item.onclick=()=>{currentChat=c;render();closeHistory();};
+
+    const title=document.createElement("span");
+    title.textContent=c.title;
+
+    const menu=document.createElement("span");
+    menu.className="menu-btn";
+    menu.textContent="⋮";
+    menu.onclick=e=>{
+      e.stopPropagation();
+      showMenu(item,i);
+    };
+
+    item.appendChild(title);
+    item.appendChild(menu);
+    historyList.appendChild(item);
+  });
+  historyPanel.classList.add("show");
+}
+
+function showMenu(item,i){
+  document.querySelectorAll(".dropdown").forEach(d=>d.remove());
+  const d=document.createElement("div");
+  d.className="dropdown";
+  d.innerHTML=`
+    <button onclick="renameChat(${i})">Rename</button>
+    <button onclick="deleteChat(${i})">Delete</button>
+  `;
+  item.appendChild(d);
+  d.style.display="block";
+}
+
+function renameChat(i){
+  const n=prompt("Rename chat:",chats[i].title);
+  if(n){chats[i].title=n;save();openHistory();}
+}
+
+function deleteChat(i){
+  if(confirm("Delete chat?")){
+    chats.splice(i,1);
+    save();openHistory();
+  }
+}
+
+function closeHistory(){historyPanel.classList.remove("show")}
+
+/* PROFILE */
+function openProfile(){profilePanel.classList.add("show")}
+function closeProfile(){profilePanel.classList.remove("show")}
+function setBg(v){document.body.style.background=v}
+
+/* SAVE */
+function save(){localStorage.setItem("chats",JSON.stringify(chats))}
+</script>
+</body>
+</html>

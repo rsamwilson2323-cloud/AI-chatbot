@@ -1,6 +1,12 @@
 {
+  "name": "ai-chatbot",
+  "version": "1.0.0",
+  "description": "AI chatbot using Groq API",
+  "type": "module",
+  "main": "server.js",
   "dependencies": {
-    "cors": "^2.8.5",
+    "axios": "^1.13.6",
+    "cors": "^2.8.6",
     "express": "^5.2.1",
     "node-fetch": "^3.3.2"
   }

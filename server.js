@@ -6,6 +6,7 @@ import fetch from "node-fetch";
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(express.static("./"));
 
 const GROQ_API_KEY = "PASTE_YOUR_GROQ_KEY";
 

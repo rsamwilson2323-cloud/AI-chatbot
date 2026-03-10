@@ -1,16 +1,20 @@
 @echo off
 title AI Chatbot Server
 
+echo Starting AI Chatbot...
+
 REM Go to project folder
-cd /d "D:\html coding\AI chatbot UI design"
+cd /d "D:\main coding\AI chatbot"
 
-REM Start Node server in a new CMD window
-start cmd /k "node server.js"
+REM Start Node server
+start cmd /k node server.js
 
-REM Wait 3 seconds to let server start
+REM Wait for server to start
 timeout /t 3 >nul
 
-REM Open the chatbot UI in default browser
+REM Open chatbot UI
 start "" "index.html"
 
-echo AI Chatbot started successfully.
+echo.
+echo ✅ AI Chatbot started successfully!
+pause
